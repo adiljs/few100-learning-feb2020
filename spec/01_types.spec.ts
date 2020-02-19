@@ -267,22 +267,27 @@ describe('declaring variables', () => {
             expect(firstName).toBe('Ben');
             expect(ln).toBe('Solo');
             expect(rest).toEqual({ job: 'Jedi Trainee' });
+
+            // expect([1, 2, 3]).toEqual([1, 3, 3]);
         });
+
         it('array spread operator', () => {
             const numbers = [1, 2, 3];
             const newNumbers = [0, ...numbers, 4];
             expect(newNumbers).toEqual([0, 1, 2, 3, 4]);
         });
 
-        it('object spread', () => {
+        it('object spread operator', () => {
             const movie = { title: 'Star Wars', director: 'Lucas', yearReleased: 1978 };
             const movie2 = { ...movie, yearReleased: 1977 };
 
             expect(movie2).toEqual({ title: 'Star Wars', director: 'Lucas', yearReleased: 1977 });
         });
     });
+
     describe('object literals', () => {
         it('has them', () => {
+
             interface Person {
                 name: string;
                 department: string;
@@ -304,8 +309,6 @@ describe('declaring variables', () => {
             };
 
 
-
-
             function printEmployeeInfo(p: Person) {
                 let prelude = `Person ${p.name} works in ${p.department} and makes ${p.salary}`;
                 if (p.manager) {
@@ -316,13 +319,11 @@ describe('declaring variables', () => {
                 console.log(prelude);
             }
 
+
             printEmployeeInfo(bob);
             printEmployeeInfo(mary);
-
-
-
         });
-        it('has truthy and falsey values', () => {
+        it('has truthy and falsy values', () => {
             expect('tacos').toBeTruthy();
             expect('').toBeFalsy();
             expect(0).toBeFalsy();
@@ -330,11 +331,13 @@ describe('declaring variables', () => {
             expect(undefined).toBeFalsy();
             expect(null).toBeFalsy();
             expect(false).toBeFalsy();
+
         });
+
         it('has duck typing', () => {
+
             interface MessageHavingThing { message: string; }
             function logMessage(thingy: MessageHavingThing) {
-
                 console.log('Got: ' + thingy.message);
             }
 
@@ -348,6 +351,100 @@ describe('declaring variables', () => {
             };
 
             logMessage(book);
+
+
         });
+    });
+});
+describe('extending interfaces', () => {
+    it('example', () => {
+
+        type MpaaRating = 'G' | 'PG' | 'PG13' | 'R' | 'NC-17';
+
+        interface Movie {
+            title: string;
+            director: string;
+            yearReleased: number;
+            cast: { [key: string]: CastMember };
+            mpaaRating: MpaaRating;
+        }
+
+        interface CastMember {
+            role: string;
+            actor: string;
+        }
+        const starWars: Movie = {
+            title: 'Star Wars Iv: A New Hope',
+            director: 'Lucas',
+            yearReleased: 1977,
+            cast: {
+                'Luke Skywalker': { role: 'Luke', actor: 'Mark Hamill' },
+                Han: { role: 'Han Solo', actor: 'Harrison Ford' }
+            },
+            mpaaRating: 'PG'
+        };
+
+        expect(starWars.cast['Luke Skywalker'].actor).toBe('Mark Hamill');
+        expect(starWars.cast.Han.actor).toBe('Harrison Ford');
+
+    });
+    it('one more example', () => {
+
+        const bob = {
+            name: 'Bob smith',
+            phone: '555-1212',
+            department: 'DEV',
+            salary: 850_000
+        };
+
+        const jenny: PhoneablePerson = {
+            name: 'Jenny',
+            phone: '867-5309',
+            location: 'PA',
+            email: 'jenny@tutone.net'
+        };
+
+
+        interface PhoneablePerson { name: string; phone: string;[key: string]: any; }
+        function printPhoneList(person: PhoneablePerson) {
+            console.log(`Call ${person.name} at ${person.phone}`);
+        }
+
+        printPhoneList(bob);
+        printPhoneList(jenny);
+
+        const bill: PhoneablePerson = {
+            name: 'Bill Hulley',
+            phone: '788-6675',
+            location: 'WA',
+            hairColor: 'GRAY'
+        };
+    });
+});
+
+describe('generics briefly', () => {
+    it('creating a generic dictionary', () => {
+
+        interface Dictionary<T> {
+            [key: string]: T;
+        }
+        interface Vehicle {
+            make: string;
+            model: string;
+        }
+        const vehicles: Dictionary<Vehicle> = {
+            738837: { make: 'Ford', model: 'Explorer' },
+            348373: { make: 'Audi', model: 'TT' },
+            38377388: { make: 'Chevy', model: 'Bolt' }
+        };
+
+
+        const friends: Dictionary<{ name: string }> = {
+            bill: { name: 'Bill Hulley' },
+            'amy stahl': { name: 'Amy S' },
+            class: { name: 'Classy Nose' }
+        };
+
+        expect(vehicles['738837'].make).toBe('Ford');
     });
 });
